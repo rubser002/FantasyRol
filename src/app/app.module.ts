@@ -20,6 +20,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { AuthGuardComponent } from './_auth/auth-guard/auth-guard.component';
 import { SignupComponent } from './signup/signup.component';
 import { HttpClientModule } from '@angular/common/http';
+import { MatGridListModule } from '@angular/material/grid-list';
 @NgModule({
   declarations: [
     AppComponent,
@@ -46,7 +47,8 @@ import { HttpClientModule } from '@angular/common/http';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    HttpClientModule 
+    HttpClientModule,
+    MatGridListModule
   ],
   providers: [],
   bootstrap: [AppComponent]

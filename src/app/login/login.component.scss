@@ -19,16 +19,7 @@
     margin: 0;
     padding: 0;
   }
-  html {
-    margin: 0px;
-    height: 100%;
-    width: 100%;
-    background: url("/assets/back.png") no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -o-background-size: cover;
-    -moz-background-size: cover;
-    background-size: cover;
-  }
+  
 
   .login-title {
     font-size: 24px;
@@ -86,4 +77,11 @@
   .buttonAction{
     padding: 0.5rem;
     padding-top: 2rem;
+  }
+  .card-container:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 17px rgba(0, 0, 0, 0.35);
+  }
+  .card-container {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
