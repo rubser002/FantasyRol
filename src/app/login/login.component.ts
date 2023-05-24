@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import * as bootstrap from 'bootstrap';
 
 @Component({
   selector: 'app-login',
@@ -11,6 +12,9 @@ import { MatInputModule } from '@angular/material/input';
 export class LoginComponent {
   email: string='';
   password: string='';
+
+
+  
 
   login() {
     // Add your login logic here
