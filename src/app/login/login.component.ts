@@ -1,8 +1,10 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import * as bootstrap from 'bootstrap';
+import { AuthenticationService } from '../_auth/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -13,12 +15,25 @@ export class LoginComponent {
   email: string='';
   password: string='';
 
+  loginForm = new FormGroup({
+    username: new FormControl('', Validators.required),
+    password: new FormControl(['', Validators.required, Validators.minLength(5)])
+  });
 
-  
+  constructor(
+    private authenticationService: AuthenticationService,
+    private router: Router,
+    ) { }
 
-  login() {
-    // Add your login logic here
-    console.log('Email:', this.email);
-    console.log('Password:', this.password);
+  ngOnInit(): void {
+  }
+
+  login(): void {
+    let username = this.email;
+    let password = this.password;
+    this.authenticationService.login(username, password).subscribe(() => 
+    this.router.navigate(['/home'])
+
+    );
   }
 }

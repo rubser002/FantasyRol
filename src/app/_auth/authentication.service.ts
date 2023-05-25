@@ -7,8 +7,8 @@ import { HttpResponse } from '@angular/common/http';
 })
 export class AuthenticationService {
 
-  fakeUsername: string = "username";
-  fakePassword: string = "password";
+  fakeUsername: string = "user";
+  fakePassword: string = "user";
 
   constructor() { }
 
@@ -16,6 +16,7 @@ export class AuthenticationService {
     // Mock a successful call to an API server.
     if (username == this.fakeUsername && password == this.fakePassword) {
       localStorage.setItem("token", "my-super-secret-token-from-server");
+      console.log('a')
       return of(new HttpResponse({ status: 200 }));
     } else {
       return of(new HttpResponse({ status: 401 }));

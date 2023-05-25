@@ -17,7 +17,6 @@ import { LayoutComponent } from './layout/layout.component';
 import { NavModule } from './nav/nav.module';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { AuthGuardComponent } from './_auth/auth-guard/auth-guard.component';
 import { SignupComponent } from './signup/signup.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -28,7 +27,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     LoginComponent,
     HomeComponent,
     LayoutComponent,
-    AuthGuardComponent,
+
     SignupComponent
   ],
   imports: [

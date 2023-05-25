@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable, map, startWith } from 'rxjs';
+import { AuthenticationService } from './_auth/authentication.service';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +16,20 @@ export class AppComponent {
   options: string[] = ['One', 'Two', 'Three'];
   filteredOptions: Observable<string[]> | undefined;
 
+  constructor(
+    private auth: AuthenticationService,
+    private router: Router,
+
+    ){
+
+  }
+
   ngOnInit() {
+    if(!this.auth.isUserLoggedIn()){
+      this.router.navigate(['/login']);
+      
+    }
+
     this.filteredOptions = this.myControl.valueChanges.pipe(
       startWith(''),
       map(value => this._filter(value || '')),
