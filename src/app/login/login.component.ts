@@ -1,10 +1,8 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import * as bootstrap from 'bootstrap';
-import { AuthenticationService } from '../_auth/authentication.service';
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+
 import { Router } from '@angular/router';
+import { AuthService } from '../services/authServices/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -12,28 +10,36 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  email: string='';
-  password: string='';
-
   loginForm = new FormGroup({
-    username: new FormControl('', Validators.required),
-    password: new FormControl(['', Validators.required, Validators.minLength(5)])
+    email: new FormControl('', Validators.required),
+    password: new FormControl('', [Validators.required, Validators.minLength(5)])
   });
 
   constructor(
-    private authenticationService: AuthenticationService,
-    private router: Router,
-    ) { }
-
-  ngOnInit(): void {
-  }
+    private authService: AuthService,
+    private router: Router
+  ) { }
 
   login(): void {
-    let username = this.email;
-    let password = this.password;
-    this.authenticationService.login(username, password).subscribe(() => 
-    this.router.navigate(['/home'])
+    if (this.loginForm.invalid) {
+      return;
+    }
 
-    );
+    const email = this.loginForm.value.email;
+    const password = this.loginForm.value.password;
+
+    const userPostDto = { email, password };
+
+    this.authService.login(userPostDto).subscribe({
+      next: (response: any) => {
+        const token = response.token;
+        this.router.navigate(['/home']);
+
+      },
+      error: (error: any) => {
+        console.log(error)
+      }
+    });
   }
+  
 }
