@@ -21,16 +21,28 @@ import { SignupComponent } from './signup/signup.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MatGridListModule } from '@angular/material/grid-list';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { ToastrModule } from 'ngx-toastr';
+import { CommonModule } from '@angular/common';
+import { ChractersDetailsComponent } from './chracter/chracters-details/chracters-details.component';
+import { ChractersListComponent } from './chracter/chracters-list/chracters-list.component';
+import { ChractersNewComponent } from './chracter/chracters-new/chracters-new.component';
+import { ChractersEditComponent } from './chracter/chracters-edit/chracters-edit.component';
+import {MatSelectModule} from '@angular/material/select';
+import { MatStepperModule } from '@angular/material/stepper';
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     HomeComponent,
     LayoutComponent,
-
-    SignupComponent
+    SignupComponent,
+    ChractersDetailsComponent,
+    ChractersListComponent,
+    ChractersNewComponent,
+    ChractersEditComponent
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
@@ -46,10 +58,11 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     FormsModule,
     MatCardModule,
     MatButtonModule,
-    MatIconModule,
     HttpClientModule,
     MatGridListModule,
     MatTooltipModule,
+    MatSelectModule,
+    MatStepperModule
   ],
   providers: [],
   bootstrap: [AppComponent]

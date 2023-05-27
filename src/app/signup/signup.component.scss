@@ -89,3 +89,16 @@ html, body {
   transform: translateY(-3px);
   box-shadow: 0 4px 17px rgba(0, 0, 0, 0.35);
 }
+.invalid-input {
+  border-color: rgb(243, 91, 91);
+}
+.ng-invalid {
+  border-color: rgb(255, 103, 103);
+}
+.errorMessage{
+  margin-top: 1rem;
+  color: rgb(248, 99, 99);
+}
+.inputCustom{
+  background-color: #12101a;
+}

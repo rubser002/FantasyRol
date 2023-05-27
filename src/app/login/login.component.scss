@@ -67,7 +67,7 @@
     font-weight: 500;
   }
   .LabelInput2{
-    padding-bottom: 0.3rem ;
+    
     padding-top: 1rem;
     font-weight: 500;
 
@@ -90,3 +90,17 @@
     transform: translateY(-3px);
     box-shadow: 0 4px 17px rgba(0, 0, 0, 0.35);
   }
+
+
+  .errorMessage{
+    margin-top: 1rem;
+    color: red;
+  }
+  
+  .invalid-input {
+    border-color: red;
+  }
+  .full-width {
+    width: 100%;
+  }
+

@@ -1,3 +1,36 @@
+@use '@angular/material' as mat;
+
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 @import url('https://fonts.googleapis.com/css2?family=Satisfy');
 @import '~bootstrap/dist/css/bootstrap.css';
+
+@function mat-color($palette, $hue: default) {
+  @return mat.get-color-from-palette($palette, $hue);
+}
+
+@include mat.core();
+// $my-primary: mat.define-palette(mat.$indigo-palette, 300, 100, 500);
+// $my-accent: mat.define-palette(mat.$purple-palette, 300, 100, 500);
+$my-primary: mat.define-palette(mat.$purple-palette, 600, 300, 800);
+$my-accent: mat.define-palette(mat.$indigo-palette, 400, 200, 600);
+
+$my-warn: mat.define-palette(mat.$red-palette);
+
+$my-theme: mat.define-light-theme((
+ color: (
+   primary: $my-primary,
+   accent: $my-accent,
+   warn: $my-warn,
+ ),
+ typography: mat.define-typography-config(),
+ density: 0,
+));
+
+
+@include mat.all-component-themes($my-theme);
+
+// Set the background color of the page to the primary color
+body {
+  background-color: mat-color($my-accent, 50);
+}
+

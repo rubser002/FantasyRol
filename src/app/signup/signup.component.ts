@@ -1,47 +1,44 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import * as bootstrap from 'bootstrap';
-import { AuthService } from '../services/authServices/auth.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/authServices/auth.service';
+
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss']
 })
 export class SignupComponent {
-  email: string='';
-  password: string='';
-  user: string='';
+  error: boolean = false;
+  signupForm = new FormGroup({
+    email: new FormControl('', [Validators.required, Validators.email]),
+    user: new FormControl('', [Validators.required, Validators.minLength(4)]),
+    password: new FormControl('', [Validators.required, Validators.minLength(8)])
+  });
 
   constructor(
     private authService: AuthService,
     private router: Router,
+  ) { }
 
-    ) { }
+  register(): void {
 
+    const email = this.signupForm.value.email;
+    const name = this.signupForm.value.user;
+    const password = this.signupForm.value.password;
 
-  ngAfterViewInit() {
-    // Initialize Bootstrap tooltip
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-      return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-  } 
+    const userPostDto = { email, name, password };
 
-  register() {
-    const user = { email: this.email, user: this.user, password: this.password };
-    this.authService.register(user).subscribe({
+    this.authService.register(userPostDto).subscribe({
       next: (response: any) => {
-      this.router.navigate(['/home']);
-
+        this.router.navigate(['/home']);
       },
       error: (error: any) => {
-        
+        this.error = true;
+        this.signupForm.controls.email.setErrors({ invalid: true });
+        this.signupForm.controls.user.setErrors({ invalid: true });
+        this.signupForm.controls.password.setErrors({ invalid: true });
       }
     });
   }
-  
-  
 }

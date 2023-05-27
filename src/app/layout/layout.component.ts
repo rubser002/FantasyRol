@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+
 import { NavComponent } from '../nav/nav.component';
 
 @Component({
@@ -7,6 +8,12 @@ import { NavComponent } from '../nav/nav.component';
   styleUrls: ['./layout.component.scss'],
 
 })
-export class LayoutComponent {
+export class LayoutComponent implements OnInit {
+  @Input()user!: string;
 
+  ngOnInit(): void {
+    
+  }
+
+  
 }

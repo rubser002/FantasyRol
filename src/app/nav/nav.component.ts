@@ -1,28 +1,77 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
+import { AuthService, User } from '../services/authServices/auth.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { RouterLinkActive } from '@angular/router';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
+interface Tab {
+  label: string;
+  route: string;
+  selected: boolean;
+  active: boolean;
+}
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss']
 })
+
 export class NavComponent {
-  myControl = new FormControl('');
-  options: string[] = ['One', 'Two', 'Three'];
-  filteredOptions: Observable<string[]> | undefined;
+  tabs: Tab[] = [
+    { label: 'Home', route: '/home', selected: false ,active: false },
+    { label: 'Character', route: '/characters', selected: false , active: false },
+
+    { label: 'New', route: '/character/new', selected: false ,active: false },
+
+  ];
+
+  user: User = new User;
+  constructor(
+    private readonly authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute,
+  ){}
 
   ngOnInit() {
-    this.filteredOptions = this.myControl.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value || '')),
-    );
+    let user = this.authService.getUser();
+  if (user) {
+    this.user = user;
   }
+    let currentTab = this.tabs.find(w => w.route === this.router.url);
 
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
+    if(currentTab){
+      currentTab.active = true;
+    }
+    console.log(this.tabs)
+    console.log(currentTab)
+  }
+  
+  isActiveTab(link: string): boolean {
+    return this.router.isActive(link, true);
+  }
+  
+  navigateToPage(route: string) {
+    this.router.navigateByUrl(route);
+    
+  }
+  onTabChange(event: MatTabChangeEvent) {
+    const selectedTabIndex = event.index;
+  
+    this.tabs.forEach((tab, index) => {
+      tab.active = index === selectedTabIndex;
+    });
+  
+    const selectedTab = this.tabs[selectedTabIndex];
+    const route = selectedTab.route;
+    console.log(route)
+    this.router.navigate([route]);
 
-    return this.options.filter(option => option.toLowerCase().includes(filterValue));
+  }
+  logout(){
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
