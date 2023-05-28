@@ -21,7 +21,7 @@
           <button mat-icon-button (click)="decreaseNumber(attribute)">
             <mat-icon>remove</mat-icon>
           </button>
-          <input type="number" [(ngModel)]="attribute.value" class="square-input">
+          <input type="number" [(ngModel)]="attribute.value" class="square-input" min="2" max="18">
           <button mat-icon-button (click)="increaseNumber(attribute)">
             <mat-icon>add</mat-icon>
           </button>
@@ -33,111 +33,155 @@
     </mat-card>
   </div>
   
+  
 
   <mat-stepper #stepper>
-    <mat-step [stepControl]="firstFormGroup" errorMessage="Name is required.">
-      <form [formGroup]="firstFormGroup">
-        <ng-template matStepLabel>Fill out your name</ng-template>
-        <mat-form-field>
-          <mat-label>Name</mat-label>
-          <input matInput placeholder="Last name, First name" formControlName="firstCtrl" required>
-        </mat-form-field>
+    <!-- Step 1: Name, Description, Story, and Alignment -->
+    <mat-step>
+      <ng-template matStepLabel>Name, Description, Story, and Alignment</ng-template>
+      <form [formGroup]="characterForm">
+        <div class="form-field-container">
+          <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
+            <mat-label>Name</mat-label>
+            <input matInput type="text" formControlName="name" class="form-control">
+          </mat-form-field>
+        </div>
+        <div class="form-field-container">
+          <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description" class="form-control"></textarea>
+          </mat-form-field>
+        </div>
+        <div class="form-field-container">
+          <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
+            <mat-label>Story</mat-label>
+            <textarea matInput formControlName="story" class="form-control"></textarea>
+          </mat-form-field>
+        </div>
+        <div class="form-field-container">
+          <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
+            <mat-label>Alignment</mat-label>
+            <input matInput type="text" formControlName="alignment" class="form-control" [matAutocomplete]="alignmentAuto">
+            <mat-autocomplete #alignmentAuto="matAutocomplete">
+              <mat-option *ngFor="let alignment of alignmentOptions" [value]="alignment">
+                {{ alignment }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
         <div>
-          <p>Go to a different step to see the error state</p>
           <button mat-button matStepperNext>Next</button>
         </div>
       </form>
     </mat-step>
-    <mat-step [stepControl]="secondFormGroup" errorMessage="Address is required.">
-      <form [formGroup]="secondFormGroup">
-        <ng-template matStepLabel>Fill out your address</ng-template>
-        <mat-form-field>
-          <mat-label>Address</mat-label>
-          <input matInput placeholder="Ex. 1 Main St, New York, NY" formControlName="secondCtrl"
-                 required>
-        </mat-form-field>
+
+
+    <mat-step>
+      <ng-template matStepLabel>Background</ng-template>
+      <form [formGroup]="characterForm">
+        
+        <div class="form-field-container">
+          <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
+            <mat-label>Backgroud Name</mat-label>
+            <input matInput type="text" formControlName="BackgroundName" class="form-control">
+          </mat-form-field>
+        </div>
+
+        <div class="form-field-container">
+          <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
+            <mat-label>Feature</mat-label>
+            <textarea matInput formControlName="Feature" class="form-control"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="form-field-container">
+          <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
+            <mat-label>Personality Trait</mat-label>
+            <textarea matInput formControlName="PersonalityTrait" class="form-control"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="form-field-container">
+          <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
+            <mat-label>Ideal</mat-label>
+            <textarea matInput formControlName="Ideal" class="form-control"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="form-field-container">
+          <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
+            <mat-label>Bond</mat-label>
+            <textarea matInput formControlName="Bond" class="form-control"></textarea>
+          </mat-form-field>
+        </div>
+        <div class="form-field-container">
+          <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
+            <mat-label>Flaw</mat-label>
+            <textarea matInput formControlName="Flaw" class="form-control"></textarea>
+          </mat-form-field>
+        </div>
+        <div class="form-field-container">
+          <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
+            <mat-label>Languages</mat-label>
+            <input matInput type="text" formControlName="Languages" class="form-control">
+          </mat-form-field>
+        </div>
+        
         <div>
-          <p>Go to a different step to see the error state</p>
           <button mat-button matStepperPrevious>Back</button>
           <button mat-button matStepperNext>Next</button>
         </div>
       </form>
     </mat-step>
+    <!-- Step 2: Race and Class -->
     <mat-step>
-      <ng-template matStepLabel>Done</ng-template>
-      <p>You are now done.</p>
+      <ng-template matStepLabel>Step 2: Race and Class</ng-template>
+      <form [formGroup]="characterForm">
+        <div class="form-field-container">
+          <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
+            <mat-label>Class</mat-label>
+            <input matInput type="text" formControlName="characterClass" class="form-control" [matAutocomplete]="classAuto">
+            <mat-autocomplete #classAuto="matAutocomplete"(optionSelected)="classOnChange($event)">
+              <mat-option *ngFor="let class of classes" [value]="class.label">
+                {{ class.label }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+        <div class="form-field-container">
+          <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
+            <mat-label>Race</mat-label>
+            <input matInput type="text" formControlName="race" class="form-control" [matAutocomplete]="raceAuto">
+            <mat-autocomplete #raceAuto="matAutocomplete" (optionSelected)="raceOnChange($event)">
+              <mat-option *ngFor="let race of races" [value]="race.label">
+                {{ race }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+  
+    <!-- Step 3: Additional Step -->
+    <mat-step>
+      <ng-template matStepLabel>First Level</ng-template>
+      <p>This is the additional step content.</p>
       <div>
         <button mat-button matStepperPrevious>Back</button>
-        <button mat-button (click)="stepper.reset()">Reset</button>
+        <button mat-button (click)="create()">Create character</button>
       </div>
     </mat-step>
   </mat-stepper>
-
-
-  
-  <form [formGroup]="characterForm">
-    <div class="form-field-container">
-      <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
-        <mat-label>Name</mat-label>
-        <input matInput type="text" formControlName="name" class="form-control">
-      </mat-form-field>
-    </div>
-    <div class="form-field-container">
-      <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
-        <mat-label>Description</mat-label>
-        <textarea matInput formControlName="description" class="form-control"></textarea>
-      </mat-form-field>
-    </div>
-    <div class="form-field-container">
-      <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
-        <mat-label>Story</mat-label>
-        <textarea matInput formControlName="story" class="form-control"></textarea>
-      </mat-form-field>
-    </div>
-    <div class="form-field-container">
-      <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
-        <mat-label>Class</mat-label>
-        <input matInput type="text" formControlName="characterClass" class="form-control" [matAutocomplete]="classAuto">
-        <mat-autocomplete #classAuto="matAutocomplete">
-          <mat-option *ngFor="let characterClass of classOptions" [value]="characterClass">
-            {{ characterClass }}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-    </div>
-    <div class="form-field-container">
-      <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
-        <mat-label>Race</mat-label>
-        <input matInput type="text" formControlName="race" class="form-control" [matAutocomplete]="raceAuto">
-        <mat-autocomplete #raceAuto="matAutocomplete">
-          <mat-option *ngFor="let race of raceOptions" [value]="race">
-            {{ race }}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-    </div>
-    <div class="form-field-container">
-      <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
-        <mat-label>Alignment</mat-label>
-        <input matInput type="text" formControlName="alignment" class="form-control" [matAutocomplete]="alignmentAuto">
-        <mat-autocomplete #alignmentAuto="matAutocomplete">
-          <mat-option *ngFor="let alignment of alignmentOptions" [value]="alignment">
-            {{ alignment }}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-    </div>
-    <button type="submit" [disabled]="characterForm.invalid">Create Character</button>
-  </form>
-  
-
 
 </mat-card-content>
 
 
   <mat-card-actions>
-    <button mat-button>Next</button>
-    <button mat-button>Back</button>
+    
   </mat-card-actions>
 </mat-card>
   

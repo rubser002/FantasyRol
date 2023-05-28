@@ -1,11 +1,14 @@
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ThemePalette } from '@angular/material/core';
+import { tap } from 'rxjs';
 
 interface Attribute {
   name: string;
   value: number;
 }
+
 @Component({
   selector: 'app-chracters-new',
   templateUrl: './chracters-new.component.html',
@@ -22,33 +25,38 @@ export class ChractersNewComponent {
   ];
   colorControl = new FormControl('primary' as ThemePalette);
   characterForm!: FormGroup;
-  classOptions: string[] = ['Warrior', 'Mage', 'Rogue', 'Cleric']; // Example class options
-  raceOptions: string[] = ['Human', 'Elf', 'Dwarf', 'Orc']; // Example race options
-  alignmentOptions: string[] = ['Lawful Good', 'Chaotic Good', 'Neutral', 'Lawful Evil', 'Chaotic Evil']; // Example alignment options
+  alignmentOptions: string[] = ['Lawful Good', 'Chaotic Good', 'Neutral', 'Lawful Evil', 'Chaotic Evil'];
+  classes: any;
+  races: any;
+  constructor(private formBuilder: FormBuilder,
+    private http: HttpClient) {}
 
-  constructor(private formBuilder: FormBuilder,private _formBuilder: FormBuilder) { }
+  async ngOnInit(): Promise<void> {
 
-  firstFormGroup = this._formBuilder.group({
-    firstCtrl: ['', Validators.required],
-  });
-  secondFormGroup = this._formBuilder.group({
-    secondCtrl: ['', Validators.required],
-  });
 
-  
-  calculateNumber(): number {
-    return Math.floor((this.numberValue - 10) / 2);
-  }
 
-  ngOnInit(): void {
     this.characterForm = this.formBuilder.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
-      story: ['', Validators.required],
+      story: [''],
+      alignment: [''],
+      BackgroundName: [''],
+      Feature: [''],
+      PersonalityTrait: [''],
+      Ideal: [''],
+      Bond: [''],
+      Flaw: [''],
+      Languages: [''],
       characterClass: ['', Validators.required],
       race: ['', Validators.required],
-      alignment: ['', Validators.required]
     });
+
+
+    this.classes = await this.http.get<any>('https://localhost:7141/api/characteristics/GetClassAutocomplete').toPromise();
+    console.log(this.classes)
+
+    this.races = await this.http.get<any>('https://localhost:7141/api/characteristics/GetRaceAutocomplete').toPromise();
+
   }
 
   submitForm(): void {
@@ -59,9 +67,6 @@ export class ChractersNewComponent {
       // You can now send the character data to a service or perform any desired operations
     }
   }
-
-
-  
 
   decreaseNumber(attribute: Attribute) {
     if (attribute.value > 0) {
@@ -81,5 +86,39 @@ export class ChractersNewComponent {
   getCalculatedNumberColor(attribute: Attribute): string {
     const diff = attribute.value - 10;
     return diff > 0 ? 'green' : diff < 0 ? 'red' : 'black';
+  }
+
+  create(){
+    
+  }
+  async classOnChange(event: any){
+    const selectedClass = this.classes.find((c: { label: any; })=> c.label);
+   
+    console.log(selectedClass)
+
+    if (selectedClass) {
+      const value = selectedClass.value;
+    console.log(value)
+
+    const url = `https://localhost:7141/api/characteristics/GetClassAbilities?classId=${value}&classLevel=${1}`;
+
+  this.http.post(url, {}).subscribe(
+    (response) => {
+      // Handle the successful response here
+      console.log(response);
+    },
+    (error) => {
+      // Handle the error here
+      console.error(error);
+    }
+  );
+  }
+  }
+ 
+
+
+
+  raceOnChange(event: any)  {
+
   }
 }
