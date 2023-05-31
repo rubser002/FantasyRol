@@ -14,7 +14,7 @@
   <div class="attribute-container">
     <mat-card class="custom-card" *ngFor="let attribute of attributes">
       <mat-card-header>
-        <mat-card-title>{{ attribute.name }}</mat-card-title>
+        <mat-card-title>{{attribute.name}}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <div class="number-input">
@@ -62,13 +62,14 @@
           <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
             <mat-label>Alignment</mat-label>
             <input matInput type="text" formControlName="alignment" class="form-control" [matAutocomplete]="alignmentAuto">
-            <mat-autocomplete #alignmentAuto="matAutocomplete">
-              <mat-option *ngFor="let alignment of alignmentOptions" [value]="alignment">
-                {{ alignment }}
+            <mat-autocomplete #alignmentAuto="matAutocomplete" (optionSelected)="alignmentOnChange($event)">
+              <mat-option *ngFor="let alignment of alignmentOptions" [value]="alignment.label">
+                {{ alignment.label }}
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>
         </div>
+        
         <div>
           <button mat-button matStepperNext>Next</button>
         </div>
@@ -154,7 +155,7 @@
             <input matInput type="text" formControlName="race" class="form-control" [matAutocomplete]="raceAuto">
             <mat-autocomplete #raceAuto="matAutocomplete" (optionSelected)="raceOnChange($event)">
               <mat-option *ngFor="let race of races" [value]="race.label">
-                {{ race }}
+                {{ race.label }}
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>
@@ -169,8 +170,20 @@
     <!-- Step 3: Additional Step -->
     <mat-step>
       <ng-template matStepLabel>First Level</ng-template>
-      <p>This is the additional step content.</p>
+      <div *ngIf="!checkClassAbilities()">
+        No habilities yet, please select a class
+      </div>
+      <div *ngIf="checkClassAbilities()">
+        <div>Vida inicial</div>
+        <input type="number" [(ngModel)]="currentHp" class="square-input" min="1" [max]="maxHp" >
+
+        <div *ngFor="let ability of abilities">
+          <h3>{{ ability.name }}</h3>
+          <p>{{ ability.description }}</p>
+        </div>
       <div>
+      </div>
+      
         <button mat-button matStepperPrevious>Back</button>
         <button mat-button (click)="create()">Create character</button>
       </div>
@@ -186,3 +199,20 @@
 </mat-card>
   
 
+<c-toaster [placement]="position" class="p-3" position="fixed">
+  <c-toast
+    (timer)="onTimerChange($event)"
+    (visibleChange)="onVisibleChange($event)"
+    [visible]="visible">
+    <c-toast-header>
+      
+      Error
+    </c-toast-header>
+    <c-toast-body>
+      <p>Couldn't add the character</p>
+      <c-progress thin>
+        <c-progress-bar [value]="percentage"></c-progress-bar>
+      </c-progress>
+    </c-toast-body>
+  </c-toast>
+</c-toaster>

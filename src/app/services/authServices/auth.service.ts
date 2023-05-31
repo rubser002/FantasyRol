@@ -33,7 +33,6 @@ export class AuthService {
 
   isLoggedIn(): Promise<boolean> {
     const token = this.getToken();
-    console.log(token);
     if (token) {
       return this.validateToken(token);
     }
@@ -44,7 +43,6 @@ export class AuthService {
   private async validateToken(token: string): Promise<boolean> {
     try {
       const data = await this.http.get<boolean>('https://localhost:7141/api/auth/check-token', { params: { token: token } }).toPromise();
-      console.log(data);
       return data !== undefined ? data : false;
     } catch (error) {
       console.error(error);
@@ -64,7 +62,6 @@ export class AuthService {
 
   private storeUser(user: User){
     localStorage.setItem('currentUser', JSON.stringify(user));
-    console.log(user)
   }
 
   public getUser(): User | null {

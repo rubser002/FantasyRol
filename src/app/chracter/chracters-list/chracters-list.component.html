@@ -1,1 +1,29 @@
-<p>chracters-list works!</p>
+
+
+
+  <div class="container">
+    <div class="row">
+        <div class="col-md-5">
+            <mat-form-field appearance="outline" style="width: 100%;">
+              <mat-label>Filter</mat-label>
+              <input matInput placeholder="Filter" [(ngModel)]="searchName" (change)="search()">
+              <mat-hint>Search for a character</mat-hint>
+            </mat-form-field>
+          </div>
+        
+    </div>
+
+    <div class="row">
+      <div class="col-md-4" *ngFor="let character of characters">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Nombre: {{character.name}}</h3>
+            <p class="card-text">Descripcion: {{character.description}}</p>
+            <p class="card-text">Clase: {{character.className}}</p>
+            <p class="card-text">Level: {{character.level}}</p>
+          </div>
+        </div>
+      </div>
+     
+    </div>
+  </div>

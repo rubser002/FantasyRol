@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 
 import { AuthService } from './services/authServices/auth.service';
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -27,9 +26,7 @@ export class AppComponent {
 
   async ngOnInit() {
     
-    if(!await this.auth.isLoggedIn()){
-      this.router.navigate(['/login']);
-    }
+    
 
     this.filteredOptions = this.myControl.valueChanges.pipe(
       startWith(''),

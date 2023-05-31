@@ -29,6 +29,9 @@ import { ChractersNewComponent } from './chracter/chracters-new/chracters-new.co
 import { ChractersEditComponent } from './chracter/chracters-edit/chracters-edit.component';
 import {MatSelectModule} from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
+import { ToastModule } from '@coreui/angular';
+import { ProgressModule } from '@coreui/angular';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -39,7 +42,8 @@ import { MatStepperModule } from '@angular/material/stepper';
     ChractersDetailsComponent,
     ChractersListComponent,
     ChractersNewComponent,
-    ChractersEditComponent
+    ChractersEditComponent,
+    
   ],
   imports: [
     CommonModule,
@@ -62,7 +66,9 @@ import { MatStepperModule } from '@angular/material/stepper';
     MatGridListModule,
     MatTooltipModule,
     MatSelectModule,
-    MatStepperModule
+    MatStepperModule,
+    ToastModule,
+    ProgressModule
   ],
   providers: [],
   bootstrap: [AppComponent]

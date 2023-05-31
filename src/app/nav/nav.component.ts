@@ -45,8 +45,6 @@ export class NavComponent {
     if(currentTab){
       currentTab.active = true;
     }
-    console.log(this.tabs)
-    console.log(currentTab)
   }
   
   isActiveTab(link: string): boolean {
@@ -66,7 +64,6 @@ export class NavComponent {
   
     const selectedTab = this.tabs[selectedTabIndex];
     const route = selectedTab.route;
-    console.log(route)
     this.router.navigate([route]);
 
   }

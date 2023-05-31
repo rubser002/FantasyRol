@@ -1,0 +1,35 @@
+.container{
+    margin-top: 4rem;
+}
+.card{
+    margin: 1rem;
+    padding: 1rem;
+}
+
+.card {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 1.25rem;
+    transition: transform 0.3s, box-shadow 0.3s;
+    
+    &:hover {
+      cursor: pointer;
+      transform: translateY(-2px) scale(0.98);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-title {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    
+    .card-text {
+      margin-bottom: 0.5rem;
+      
+      strong {
+        font-weight: bold;
+      }
+    }
+  }
+  
