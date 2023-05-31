@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ThemePalette } from '@angular/material/core';
+import { Router } from '@angular/router';
 import { ToasterComponent, ToasterPlacement } from '@coreui/angular';
 
 import { tap } from 'rxjs';
@@ -61,7 +62,8 @@ export class ChractersNewComponent {
   constructor(
     private formBuilder: FormBuilder,
     private authSV: AuthService,
-    private http: HttpClient) {}
+    private http: HttpClient,
+    private router: Router) {}
 
   async ngOnInit(): Promise<void> {
 
@@ -107,7 +109,7 @@ export class ChractersNewComponent {
   }
 
   getCalculatedNumber(attribute: Attribute): string {
-    const diff = attribute.value - 10;
+    const diff = (attribute.value - 10)/2;
     return diff > 0 ? '+' + diff : diff.toString();
   }
 
@@ -117,7 +119,7 @@ export class ChractersNewComponent {
   }
 
   create(){
-    this.visible = !this.visible;
+    
     let bonuses: any[] = []; 
     this.attributes.forEach(element => {
       let bonus = {
@@ -154,22 +156,74 @@ export class ChractersNewComponent {
     },
     bonuses: bonuses.length > 0 ? bonuses : []
   };
-
-    const requestBody = {
-      characterPostDto: characterData
-    };
-  
+    
     try{
-      this.http.post<any>('https://localhost:7141/api/characters/AddCharacter', characterData).pipe(
-          
-      ).subscribe();
+
+      const url = 'https://localhost:7141/api/characters/AddCharacter';
+
+      
+      const headers = new HttpHeaders({
+        'accept': '*/*',
+        'Content-Type': 'application/json' 
+      });
+      
+      
+      
+         new Promise((resolve, reject) =>{
+          this.http
+            .post("https://localhost:7141/api/characters/AddCharacter",characterData)
+            .subscribe((res: any)=> {
+              console.log(res.toString())
+              this.addAbilities(res.toString())
+                resolve(res);
+              },
+              (err: any) => {
+                reject(err);
+              }
+            )
+        });  
+      
     }catch(error){
+      console.log(error)
       this.visible = !this.visible;
     }
     
     
   }
+  addAbilities(characterId: string){
 
+    const requestBody = {
+      characterId: characterId,
+      abilitiesPost: this.abilities
+    };
+  try{
+    console.log(characterId)
+    const url = `https://localhost:7141/api/ability/AddAbilitiesToCharacter?characterId=${characterId}`;
+    console.log(url)
+    const headers = new HttpHeaders()
+      .set('Accept', '*/*')
+      .set('Content-Type', 'application/json');
+
+    const body = this.abilities;
+
+    this.http.post(url, body, { headers })
+      .subscribe(
+        response => {
+          console.log('API response:', response);
+          // Handle the response as needed
+        },
+        error => {
+          console.error('API error:', error);
+          // Handle errors as needed
+        }
+      );
+
+}catch(err){
+  console.log(err)
+}
+    
+
+  }
 
   async classOnChange(event: any){
     try{

@@ -6,6 +6,7 @@ import { HomeComponent } from './home/home.component';
 import { SignupComponent } from './signup/signup.component';
 import { ChractersNewComponent } from './chracter/chracters-new/chracters-new.component';
 import { ChractersListComponent } from './chracter/chracters-list/chracters-list.component';
+import { ChractersDetailsComponent } from './chracter/chracters-details/chracters-details.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,8 @@ const routes: Routes = [
     children: [
       { path: 'home', component: HomeComponent },
       { path: 'character/new', component: ChractersNewComponent},
+      { path: 'character/details/:characterId', component: ChractersDetailsComponent},
+
       { path: 'characters', component: ChractersListComponent},
 
     ]

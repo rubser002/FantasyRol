@@ -12,10 +12,15 @@
           </div>
         
     </div>
+    <div class="row">
+      <div class="col-md-4" *ngIf="noCharacters" style="color: red;">
+        No Characters Yet! or  Loading
+      </div>
+    </div>
 
     <div class="row">
       <div class="col-md-4" *ngFor="let character of characters">
-        <div class="card">
+        <div class="card" (click)="goToCharacter(character.id)">
           <div class="card-body">
             <h3 class="card-title">Nombre: {{character.name}}</h3>
             <p class="card-text">Descripcion: {{character.description}}</p>

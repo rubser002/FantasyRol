@@ -31,6 +31,8 @@ import {MatSelectModule} from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { ToastModule } from '@coreui/angular';
 import { ProgressModule } from '@coreui/angular';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
   declarations: [
@@ -43,6 +45,7 @@ import { ProgressModule } from '@coreui/angular';
     ChractersListComponent,
     ChractersNewComponent,
     ChractersEditComponent,
+
     
   ],
   imports: [
@@ -67,8 +70,11 @@ import { ProgressModule } from '@coreui/angular';
     MatTooltipModule,
     MatSelectModule,
     MatStepperModule,
+    MatCheckboxModule,
     ToastModule,
-    ProgressModule
+    ProgressModule,
+    MatTabsModule,
+    
   ],
   providers: [],
   bootstrap: [AppComponent]

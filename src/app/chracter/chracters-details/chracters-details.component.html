@@ -1,1 +1,123 @@
-<p>chracters-details works!</p>
+<div *ngIf="loaded">
+
+    <div class="attribute-container">
+        <div class="row">
+          <div class="col-md-2" *ngFor="let bonus of bonusesBase">
+            <mat-card class="custom-card-bonus">
+              <mat-card-content>
+                <div class="row">
+                  <div class="col-md-4 characteristicDesc" >
+                    {{bonus.characteristicDesc}}
+                  </div>
+                  <div class="col-md-3 characteristicInput" >
+                    <input type="number" [(ngModel)]="bonus.bonusValue" class="square-input" min="2" max="18">
+                  </div>
+                  <div class="col-md-3">
+                    <mat-checkbox [(ngModel)]="bonus.setProficiency" (change)="updateProficiency(bonus)"></mat-checkbox>
+                  </div>
+                  <div class="col-md-1 characteristicDesc" >
+                    <div class="calculated-number" [ngStyle]="{ color: getCalculatedNumberColor(bonus) }">
+                      <span>{{ getCalculatedNumber(bonus) }}</span>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </div>
+    
+    
+      <div class="attribute-container">
+        <div class="row">
+          <div class="col-md-2">
+            <div *ngFor="let bonus of bonuses">
+              <mat-card class="custom-card-bonus">
+                <mat-card-content>
+                  <div class="row">
+                    <div class="col-md-4 characteristicDesc">
+                      <div>{{bonus.characteristicDesc}}</div>
+                    </div>
+                    <div class="col-md-3 characteristicInput">
+                      <input type="number" [(ngModel)]="bonus.bonusValue" class="square-input" min="2" max="18">
+                    </div>
+                    <div class="col-md-2">
+                      <mat-checkbox [(ngModel)]="bonus.setProficiency" (change)="updateProficiency(bonus)"></mat-checkbox>
+                    </div>
+                    <div class="col-md-1 characteristicDesc">
+                      <div class="calculated-number" [ngStyle]="{ color: getCalculatedNumberColor(bonus) }">
+                        <span>{{ getCalculatedNumber(bonus) }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+          <div class="col-md-9">
+            <mat-card class="custom-card-view">
+                <mat-card-content>
+                  <h1>Name: {{character.name}}</h1>
+                  <h3>Description: {{character.description}}</h3>
+              
+                  <mat-tab-group>
+                    <mat-tab label="Trasfondo">
+                        <ng-template matTabContent>
+                            <div class="background-info">
+                              <h1>Trasfondo</h1>
+                              <div class="background-details">
+                                <div class="background-item">
+                                  <h2>Name:</h2>
+                                  <p>{{character.background.name}}</p>
+                                </div>
+                                <div class="background-item">
+                                  <h2>Features:</h2>
+                                  <p>{{character.background.features}}</p>
+                                </div>
+                                <div class="background-item">
+                                  <h2>Personality Trait:</h2>
+                                  <p>{{character.background.personalityTrait}}</p>
+                                </div>
+                                <div class="background-item">
+                                  <h2>Ideal:</h2>
+                                  <p>{{character.background.ideal}}</p>
+                                </div>
+                                <div class="background-item">
+                                  <h2>Bond:</h2>
+                                  <p>{{character.background.bond}}</p>
+                                </div>
+                                <div class="background-item">
+                                  <h2>Flaw:</h2>
+                                  <p>{{character.background.flaw}}</p>
+                                </div>
+                                <div class="background-item">
+                                  <h2>Languages:</h2>
+                                  <p>{{character.background.languages}}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </ng-template>
+                          
+                    </mat-tab>
+                    <mat-tab label="Abilidades de clase y raza">
+                      <ng-template matTabContent>
+                        <h2>Abilidades de clase y raza</h2>
+                        <!-- Add your content for Tab 2 here -->
+                      </ng-template>
+                    </mat-tab>
+                    <mat-tab label="Hechizos">
+                      <ng-template matTabContent>
+                        <h2>Hechizos</h2>
+                        <!-- Add your content for Tab 3 here -->
+                      </ng-template>
+                    </mat-tab>
+                  </mat-tab-group>
+                </mat-card-content>
+              </mat-card>
+          </div>
+        </div>
+      </div>
+      
+</div>
+
+  

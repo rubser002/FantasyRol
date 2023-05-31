@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { tap } from 'rxjs';
 import { AuthService } from 'src/app/services/authServices/auth.service';
 
@@ -11,12 +12,16 @@ import { AuthService } from 'src/app/services/authServices/auth.service';
 export class ChractersListComponent implements OnInit {
   
 
-  constructor(private http: HttpClient, private  auth: AuthService){
+  constructor(
+    private http: HttpClient, 
+    private  auth: AuthService,
+    private router: Router
+    ){
 
   }
   searchName: string = "";
   characters: any;
-  
+  noCharacters: boolean = true;
   ngOnInit(): void {
     this.getCharactrs();
       
@@ -49,8 +54,12 @@ getCharactrs(){
     
     this.http.post(url, {}, { params: queryParams, headers: headers })
       .subscribe(response => {
-        
         this.characters= response;
+        if(response!=null||response!=undefined){
+          this.characters= response;
+          this.noCharacters= false;
+        }
+        
       }, error => {
         
       });
@@ -69,5 +78,9 @@ getCharactrs(){
     this.getCharactrs();
   }
 
-  
+  goToCharacter(id: string){
+
+    this.router.navigate(['/character/details/'+id]);
+
+  }
 }

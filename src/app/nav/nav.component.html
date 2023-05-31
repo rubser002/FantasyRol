@@ -13,10 +13,10 @@
 
 
       <nav>
-        <mat-tab-group (selectedTabChange)="onTabChange($event)">
+        <mat-tab-group >
           <mat-tab *ngFor="let tab of tabs">
             <ng-template mat-tab-label>
-              <span class="custom-tab-label" [class.active]="tab.active">{{ tab.label }}</span>
+              <span class="custom-tab-label" (click)="onTabCLick(tab)" [class.active]="tab.active">{{ tab.label }}</span>
             </ng-template>
           </mat-tab>
         </mat-tab-group>

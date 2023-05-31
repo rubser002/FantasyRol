@@ -22,8 +22,7 @@ interface Tab {
 export class NavComponent {
   tabs: Tab[] = [
     { label: 'Home', route: '/home', selected: false ,active: false },
-    { label: 'Character', route: '/characters', selected: false , active: false },
-
+    { label: 'Characters', route: '/characters', selected: false , active: false },
     { label: 'New', route: '/character/new', selected: false ,active: false },
 
   ];
@@ -67,6 +66,15 @@ export class NavComponent {
     this.router.navigate([route]);
 
   }
+
+  onTabCLick(tabD: any){
+    this.tabs.forEach((tab, index) => {
+      tab.active = tab === tabD;
+    });
+    
+    this.router.navigate([tabD.route]);
+  }
+
   logout(){
     this.authService.logout();
     this.router.navigate(['/login']);

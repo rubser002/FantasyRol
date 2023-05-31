@@ -36,4 +36,10 @@
   .custom-tab-label:hover::after {
     width: 100%;
   }
+  .mat-tab-label {
+    cursor: none; /* Remove default cursor from the mat-tab element */
+  }
   
+  .custom-tab-label {
+    cursor: pointer; /* Apply cursor to the span element */
+  }
