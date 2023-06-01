@@ -12,13 +12,17 @@ import { Router } from '@angular/router';
 })
 export class LayoutComponent implements OnInit {
   @Input()user!: string;
-
+  isloggedin:boolean=false
   constructor(private auth: AuthService,private router : Router){
 
   }
   async ngOnInit(): Promise<void> {
+
     if(!await this.auth.isLoggedIn()){
+      
       this.router.navigate(['/login']);
+    }else{
+      this.isloggedin=true;
     }
   }
 

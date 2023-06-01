@@ -1,8 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatAutocomplete } from '@angular/material/autocomplete';
 import { ThemePalette } from '@angular/material/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToasterComponent, ToasterPlacement } from '@coreui/angular';
 
 import { tap } from 'rxjs';
@@ -12,6 +13,7 @@ interface Attribute {
   name: string;
   value: number;
   enum: number;
+  id?:string;
 }
 
 @Component({
@@ -20,10 +22,17 @@ interface Attribute {
   styleUrls: ['./chracters-new.component.scss']
 })
 export class ChractersNewComponent {
+  currentPage: number = 1;
+  pageSize: number = 10;
+  totalPages: number = 0;
   placement = ToasterPlacement.TopCenter;
+  @ViewChild(MatAutocomplete) autocomplete!: MatAutocomplete;
 
   @ViewChild(ToasterComponent) toaster!: ToasterComponent;
-
+  characterId: string='';
+  isUpdating:boolean = false;
+  characterClassControl!: FormControl;
+  showRace:boolean = false;
   numberValue: number = 0;
   attributes: Attribute[] = [
     { name: 'Strength', value: 10 , enum: 1},
@@ -48,8 +57,8 @@ export class ChractersNewComponent {
     { label: 'Chaotic Evil', value: 9 }
   ];
 
-
-  
+  showClass: boolean= false;
+  raceAbilityExists: boolean=false;
   alignmentValue!: number;
   class: any;
   classes: any;
@@ -58,15 +67,19 @@ export class ChractersNewComponent {
   races: any;
   currentHp: number = 0;
   maxHp: number = 12;
+  error: string = "";
 
   constructor(
+    private route : ActivatedRoute,
     private formBuilder: FormBuilder,
     private authSV: AuthService,
     private http: HttpClient,
     private router: Router) {}
 
   async ngOnInit(): Promise<void> {
-
+    let result = this.route.snapshot.paramMap.get('characterId');
+    if(result!=null)
+      this.characterId = result;
 
 
     this.characterForm = this.formBuilder.group({
@@ -85,11 +98,81 @@ export class ChractersNewComponent {
       race: ['', Validators.required],
     });
 
+    
 
     this.classes = await this.http.get<any>('https://localhost:7141/api/characteristics/GetClassAutocomplete').toPromise();
 
     this.races = await this.http.get<any>('https://localhost:7141/api/characteristics/GetRaceAutocomplete').toPromise();
+    if(result){
+      this.getCharacter(result);
+    }
+  }
 
+  getCharacter(characterId: any){
+    const url = 'https://localhost:7141/api/characters/GetCharacterById';
+
+    const queryParams: { [key: string]: string } = {};
+    
+    queryParams['CharacterId'] = characterId;
+
+    let user = this.authSV.getUser();
+    if(user){
+      queryParams['UserId'] = user.id
+    }
+
+    const headers = new HttpHeaders({
+      'accept': '*/*',
+      'Content-Type': 'application/json' 
+    });
+    
+    this.http.post(url, {}, { params: queryParams, headers: headers })
+      .subscribe((response:any) => {
+
+        this.characterForm.patchValue({
+          name: response.name,
+          description: response.description,
+          story: response.story,
+          BackgroundName: response.background.name,
+          Languages: response.background.languages,
+          Feature: response.background.features,
+          PersonalityTrait: response.background.personalityTrait,
+          Ideal: response.background.ideal,
+          Bond: response.background.bond,
+          Flaw: response.background.flaw,
+          level: response.level,
+          experiencePoints: response.experiencePoints,
+          alignment: response.alignment,
+          currentHitPoints: response.currentHitPoints,
+          currentSpellSlots: response.currentSpellSlots,
+          characterRaceId: response.characterRaceId,
+          characterClassId: response.characterClassId
+        });
+
+        
+        this.characterClassControl = this.characterForm.get('characterClass') as FormControl;
+        this.characterClassControl.setValue(response.className);
+        let classname: string = response.className
+        this.classOnChange(classname);
+
+        this.characterClassControl = this.characterForm.get('race') as FormControl;
+        this.characterClassControl.setValue(response.raceName);
+
+        
+        
+        let racename: string = response.raceName
+        this.raceOnChange(racename);
+        this.characterClassControl = this.characterForm.get('alignment') as FormControl;
+        this.characterClassControl.setValue(response.alignmentDescription);
+        let alignmentname: string = response.alignmentDescription
+
+        this.alignmentOnChange(alignmentname);
+        this.isUpdating = true;
+        let firstArray = response.bonuses;
+        
+      }, error => {
+        this.router.navigate(['/characters']);
+
+      });
   }
 
   submitForm(): void {
@@ -99,13 +182,16 @@ export class ChractersNewComponent {
   }
 
   decreaseNumber(attribute: Attribute) {
+    if(!this.isUpdating)
     if (attribute.value > 0) {
       attribute.value--;
     }
   }
 
   increaseNumber(attribute: Attribute) {
-    attribute.value++;
+    if(!this.isUpdating)
+      if (attribute.value < 18)
+      attribute.value++;
   }
 
   getCalculatedNumber(attribute: Attribute): string {
@@ -116,6 +202,57 @@ export class ChractersNewComponent {
   getCalculatedNumberColor(attribute: Attribute): string {
     const diff = attribute.value - 10;
     return diff > 0 ? 'green' : diff < 0 ? 'red' : 'black';
+  }
+
+  update(){
+    
+    let user = this.authSV.getUser();
+    const characterData = {
+      id: this.characterId,
+      name: this.characterForm.value.name || '',
+      description: this.characterForm.value.description || null,
+      story: this.characterForm.value.story || null,
+      level: 1,
+      experiencePoints: 0,
+      alignment: this.alignmentValue,
+      currentHitPoints: this.currentHp || null,
+      currentSpellSlots: "",
+      userId: user?.id , 
+      characterRaceId: this.race.id,
+      characterClassId: this.class.id,
+      subclassId: null, 
+      background: {
+        name: this.characterForm.value.BackgroundName,
+        languages: this.characterForm.value.Languages || null,
+        features: this.characterForm.value.Feature || null,
+        personalityTrait: this.characterForm.value.PersonalityTrait || null,
+        ideal: this.characterForm.value.Ideal || null,
+        bond: this.characterForm.value.Bond || null,
+        flaw: this.characterForm.value.Flaw || null
+    },
+    
+  };
+    
+    try{
+      
+         new Promise((resolve, reject) =>{
+          this.http
+            .post("https://localhost:7141/api/characters/UpdateCharacter",characterData)
+            .subscribe((res: any)=> {
+              this.router.navigate(['/character/details/',this.characterId]);
+              
+                resolve(res);
+              },
+              (err: any) => {
+                reject(err);
+              }
+            )
+        });  
+      
+    }catch(error){
+      this.error = "Couldnt update the character"
+      this.visible = !this.visible;
+    }
   }
 
   create(){
@@ -129,7 +266,6 @@ export class ChractersNewComponent {
       };
       bonuses.push(bonus);
     });
-
 
     let user = this.authSV.getUser();
     const characterData = {
@@ -158,22 +294,11 @@ export class ChractersNewComponent {
   };
     
     try{
-
-      const url = 'https://localhost:7141/api/characters/AddCharacter';
-
-      
-      const headers = new HttpHeaders({
-        'accept': '*/*',
-        'Content-Type': 'application/json' 
-      });
-      
-      
       
          new Promise((resolve, reject) =>{
           this.http
             .post("https://localhost:7141/api/characters/AddCharacter",characterData)
             .subscribe((res: any)=> {
-              console.log(res.toString())
               this.addAbilities(res.toString())
                 resolve(res);
               },
@@ -184,22 +309,21 @@ export class ChractersNewComponent {
         });  
       
     }catch(error){
-      console.log(error)
+      this.error = "Couldnt add the character"
+
       this.visible = !this.visible;
     }
     
     
   }
   addAbilities(characterId: string){
-
+    this.abilities.push(this.race.ability)
     const requestBody = {
       characterId: characterId,
       abilitiesPost: this.abilities
     };
   try{
-    console.log(characterId)
     const url = `https://localhost:7141/api/ability/AddAbilitiesToCharacter?characterId=${characterId}`;
-    console.log(url)
     const headers = new HttpHeaders()
       .set('Accept', '*/*')
       .set('Content-Type', 'application/json');
@@ -209,25 +333,31 @@ export class ChractersNewComponent {
     this.http.post(url, body, { headers })
       .subscribe(
         response => {
-          console.log('API response:', response);
-          // Handle the response as needed
+          this.router.navigate(['/home']);
+
         },
         error => {
-          console.error('API error:', error);
-          // Handle errors as needed
+          this.error = "Couldnt add the abilities"
+        this.visible = !this.visible;
+          
         }
       );
 
 }catch(err){
-  console.log(err)
 }
     
 
   }
 
   async classOnChange(event: any){
+
     try{
-      const selectedClassName = event.option.value;
+      let selectedClassName: any;
+      if(typeof event === 'string'){
+        selectedClassName = event
+      }else{
+        selectedClassName= event.option.value;
+      }
 
       const selectedClass = this.classes.find((c: any) => c.label === selectedClassName);
     
@@ -262,7 +392,8 @@ export class ChractersNewComponent {
           }).subscribe(
             (response) => {
               this.class = response;
-              
+              this.currentHp=1
+              this.showClass = true;
               
               this.maxHp=(this.class.hitDice * 2) +2
               
@@ -277,13 +408,19 @@ export class ChractersNewComponent {
 
   alignmentOnChange(event: any){
     try{
-      const selectedAlignmentName = event.option.value;
-
+      let selectedAlignmentName: any;
+      if(typeof event === 'string'){
+        selectedAlignmentName = event
+      }else{
+        selectedAlignmentName= event.option.value;
+      }
+      
       const selectedAlignment = this.alignmentOptions.find((c: any) => c.label === selectedAlignmentName);
     
         if (selectedAlignment) {
           
           this.alignmentValue = selectedAlignment.value;
+          
         }
       
     }catch(error){
@@ -294,7 +431,12 @@ export class ChractersNewComponent {
 
   raceOnChange(event: any)  {
     try{
-      const selectedRaceName = event.option.value;
+      let selectedRaceName: any;
+      if(typeof event === 'string'){
+        selectedRaceName = event
+      }else{
+        selectedRaceName= event.option.value;
+      }
 
       const selectedRace = this.races.find((c: any) => c.label === selectedRaceName);
     
@@ -313,7 +455,14 @@ export class ChractersNewComponent {
           }).subscribe(
             (response) => {
               this.race = response;
-              
+              this.showRace = true;
+
+              if(this.race.ability){
+                this.raceAbilityExists= true;
+              }else{
+                this.raceAbilityExists= false;
+
+              }
             },
           );
           
@@ -346,5 +495,32 @@ export class ChractersNewComponent {
 
   onTimerChange($event: number) {
     this.percentage = $event * 25;
+  }
+
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.loadData();
+    }
+  }
+
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadData();
+    }
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+      this.currentPage = page;
+      this.loadData();
+    }
+  }
+
+  loadData() {
+    this.currentPage, this.pageSize
+    
   }
 }

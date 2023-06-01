@@ -21,6 +21,7 @@ const routes: Routes = [
       { path: 'home', component: HomeComponent },
       { path: 'character/new', component: ChractersNewComponent},
       { path: 'character/details/:characterId', component: ChractersDetailsComponent},
+      { path: 'character/edit/:characterId', component: ChractersNewComponent},
 
       { path: 'characters', component: ChractersListComponent},
 

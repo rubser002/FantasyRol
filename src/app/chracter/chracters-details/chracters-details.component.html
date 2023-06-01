@@ -1,30 +1,39 @@
 <div *ngIf="loaded">
 
     <div class="attribute-container">
-        <div class="row">
-          <div class="col-md-2" *ngFor="let bonus of bonusesBase">
-            <mat-card class="custom-card-bonus">
-              <mat-card-content>
-                <div class="row">
-                  <div class="col-md-4 characteristicDesc" >
-                    {{bonus.characteristicDesc}}
-                  </div>
-                  <div class="col-md-3 characteristicInput" >
-                    <input type="number" [(ngModel)]="bonus.bonusValue" class="square-input" min="2" max="18">
-                  </div>
-                  <div class="col-md-3">
-                    <mat-checkbox [(ngModel)]="bonus.setProficiency" (change)="updateProficiency(bonus)"></mat-checkbox>
-                  </div>
-                  <div class="col-md-1 characteristicDesc" >
-                    <div class="calculated-number" [ngStyle]="{ color: getCalculatedNumberColor(bonus) }">
-                      <span>{{ getCalculatedNumber(bonus) }}</span>
+      <div class="row">
+        <div class="col d-flex align-items-center justify-content-center">
+          <button class="btn btn-primary btn-block text-center" style="width: 100%; margin: 0.5rem;" (click)="save()">Save bonuses</button>
+        </div>
+        
+        <div class="col-md-10">
+          <div class="row">
+            <div class="col-md-2" *ngFor="let bonus of bonusesBase">
+              <mat-card class="custom-card-bonus">
+                <mat-card-content>
+                  <div class="row">
+                    <div class="col-md-4 characteristicDesc">
+                      {{bonus.characteristicDesc}}
+                    </div>
+                    <div class="col-md-3 characteristicInput">
+                      <input type="number" [(ngModel)]="bonus.bonusValue" class="square-input" min="2" max="18">
+                    </div>
+                    <div class="col-md-3">
+                      <mat-checkbox [(ngModel)]="bonus.setProficiency" (change)="updateProficiency(bonus)"></mat-checkbox>
+                    </div>
+                    <div class="col-md-1 characteristicDesc">
+                      <div class="calculated-number" [ngStyle]="{ color: getCalculatedNumberColor(bonus) }">
+                        <span>{{ getCalculatedNumber(bonus) }}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </mat-card-content>
-            </mat-card>
+                </mat-card-content>
+              </mat-card>
+            </div>
           </div>
         </div>
+      </div>
+      
       </div>
     
     
@@ -57,10 +66,20 @@
           <div class="col-md-9">
             <mat-card class="custom-card-view">
                 <mat-card-content>
-                  <h1>Name: {{character.name}}</h1>
+                  <div class="row">
+                    <div class="col-md-10">
+                    <h1>Name: {{character.name}}</h1>
+
+                    </div>
+                    <div class="col-md-2">
+                    <button mat-raised-button color="primary"  (click)="editCharacter()">Edit character</button>
+
+                    </div>
+
+                  </div>
                   <h3>Description: {{character.description}}</h3>
               
-                  <mat-tab-group>
+                  <mat-tab-group (selectedTabChange)="onTabChange($event)">
                     <mat-tab label="Trasfondo">
                         <ng-template matTabContent>
                             <div class="background-info">
@@ -102,7 +121,62 @@
                     <mat-tab label="Abilidades de clase y raza">
                       <ng-template matTabContent>
                         <h2>Abilidades de clase y raza</h2>
-                        <!-- Add your content for Tab 2 here -->
+                        <h3>Descripcion de Clase</h3>
+                        <h4>{{character.characterClass.name}}</h4>
+                        <p>{{character.characterClass.description}}</p>
+
+                        <h3>Descripcion de Raza</h3>
+                        <h4>{{character.characterRace.name}}</h4>
+                        <p>{{character.characterRace.description}}</p>
+
+                        <h3>Abilidades de personaje</h3>
+                        <button mat-raised-button color="primary" class="new-ability" (click)="toggleNewAbility()">Create New Ability</button>
+
+                        <div *ngIf="showNewAbilityForm" class="new-ability">
+                          <div class="row">
+                            <mat-form-field appearance="outline">
+                              <mat-label>New Ability Title</mat-label>
+                              <input matInput [(ngModel)]="newAbility.name">
+                            </mat-form-field>
+                          </div>
+                          <div class="row">
+                            <mat-form-field appearance="outline">
+                              <mat-label>New Ability Description</mat-label>
+                              <textarea matInput [(ngModel)]="newAbility.description"></textarea>
+                            </mat-form-field>
+                          </div>
+                          <div class="row">
+                            <button mat-raised-button color="primary" (click)="saveNewAbility()">Save</button>
+                            <button mat-raised-button color="warn" (click)="cancelNewAbility()">Cancel</button>
+                          </div>
+                        </div>
+
+                        <div *ngFor="let ability of abilities">
+                          <div [ngClass]="{ 'editable': ability.editable }">
+                            <div class="row">
+                              <mat-form-field appearance="outline">
+                                <mat-label>Título</mat-label>
+                                <input matInput [(ngModel)]="ability.name" [disabled]="!ability.editable" [ngClass]="{ 'disabled-opacity': !ability.editable }">
+                              </mat-form-field>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-10">
+                                <mat-form-field appearance="outline">
+                                  <mat-label>Descripción</mat-label>
+                                  <textarea matInput [(ngModel)]="ability.description" [disabled]="!ability.editable" [ngClass]="{ 'disabled-opacity': !ability.editable }"></textarea>
+                                </mat-form-field>
+                              </div>
+                              <div class="col-md-2">
+                                <button mat-icon-button (click)="toggleEditability(ability)">
+                                  <mat-icon>{{ ability.editable ? 'save' : 'edit' }}</mat-icon>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        
+
                       </ng-template>
                     </mat-tab>
                     <mat-tab label="Hechizos">
@@ -121,3 +195,19 @@
 </div>
 
   
+<c-toaster [placement]="position" class="p-3" position="fixed">
+  <c-toast
+    (timer)="onTimerChange($event)"
+    (visibleChange)="onVisibleChange($event)"
+    [visible]="visible">
+    <c-toast-header>
+      Error
+    </c-toast-header>
+    <c-toast-body>
+      <p>{{error}}</p>
+      <c-progress thin>
+        <c-progress-bar [value]="percentage"></c-progress-bar>
+      </c-progress>
+    </c-toast-body>
+  </c-toast>
+</c-toaster>

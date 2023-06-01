@@ -40,7 +40,6 @@ getCharactrs(){
     if (userId) {
       queryParams['UserId'] = userId;
     }
-    console.log(this.searchName)
     if (this.searchName) {
       queryParams['filter'] = this.searchName;
     }
@@ -53,28 +52,20 @@ getCharactrs(){
     
     
     this.http.post(url, {}, { params: queryParams, headers: headers })
-      .subscribe(response => {
-        this.characters= response;
-        if(response!=null||response!=undefined){
-          this.characters= response;
-          this.noCharacters= false;
-        }
-        
-      }, error => {
-        
-      });
+  .subscribe((value: Object) => {
+    const response = value as any[]; // Cast the response to the expected type
+    if (response && response.length > 0) {
+      this.characters = response;
+      this.noCharacters = false;
+    }
+  }, error => {
+    // Handle error
+  });
+
 }
 
 
-
-
-      
-
-  
-  
-
   search(){
-    console.log(this.searchName)
     this.getCharactrs();
   }
 

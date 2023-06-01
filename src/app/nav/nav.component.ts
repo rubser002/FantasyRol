@@ -3,7 +3,7 @@ import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import { AuthService, User } from '../services/authServices/auth.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { RouterLinkActive } from '@angular/router';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 
@@ -36,14 +36,20 @@ export class NavComponent {
 
   ngOnInit() {
     let user = this.authService.getUser();
-  if (user) {
-    this.user = user;
-  }
-    let currentTab = this.tabs.find(w => w.route === this.router.url);
-
-    if(currentTab){
-      currentTab.active = true;
+    if (user) {
+      this.user = user;
     }
+  
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        let currentTab = this.tabs.find(w => w.route === event.url);
+  
+        if (currentTab) {
+          this.tabs.forEach(t=>t.active=false)
+          currentTab.active = true;
+        }
+      }
+    });
   }
   
   isActiveTab(link: string): boolean {

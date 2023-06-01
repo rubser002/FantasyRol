@@ -3,9 +3,17 @@ import { OnInit } from '@angular/core';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from 'src/app/services/authServices/auth.service';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
+interface Ability{
+  id:string;
+  name:string;
+  description:string;
+  editable:boolean;
+}
 
 interface Bonus {
+  id:string;
   bonusValue: number;
   characteristic: number;
   characteristicDesc: string;
@@ -17,6 +25,17 @@ interface Bonus {
   styleUrls: ['./chracters-details.component.scss']
 })
 export class ChractersDetailsComponent implements OnInit{
+  showNewAbilityForm: boolean = false;
+  newAbility: any = {
+    name: '',
+    description: ''
+  };
+  tempName: string = '';
+  tempDescription: string = '';
+  error:string='';
+  position = 'top-end';
+  visible = false;
+  percentage = 0;
   loaded: boolean=false
   proficiency: number = 2;
   character: any;
@@ -25,10 +44,12 @@ export class ChractersDetailsComponent implements OnInit{
   bonusesBase: Bonus[] = [];
   spells: any[] = [];
   items: any[] = [];
-  abilities: any[] = [];
+  abilities: Ability[] = [];
   showSpells: boolean = false;
   showItems: boolean = false;
   showAbilities: boolean = false;
+  class: any;
+  race:any;
 
   constructor(private route : ActivatedRoute,
       private router: Router,
@@ -46,12 +67,11 @@ export class ChractersDetailsComponent implements OnInit{
       this.router.navigate(['/characters']);
     }
 
-
   }
 
 
   getDetailsCahracter(){
-    const url = 'https://localhost:7141/api/characters/GetCharacterById';
+    const url = 'https://localhost:7141/api/characters/GetCharacterDetailsById';
 
     const queryParams: { [key: string]: string } = {};
     
@@ -78,11 +98,50 @@ export class ChractersDetailsComponent implements OnInit{
 
   }
 
+  toggleEditability(ability: any) {
+    if (ability.editable) {
+      this.updateAbility(ability);
+      
+    }
+    ability.editable = !ability.editable;
+  }
+  
+
+
+  updateAbility(ability: any){
+    
+  try{
+    const url = `https://localhost:7141/api/ability/UpdateAbilities?characterId=${this.character.id}`;
+    const headers = new HttpHeaders()
+      .set('Accept', '*/*')
+      .set('Content-Type', 'application/json');
+
+    const body = [ability];
+
+    this.http.post(url, body, { headers })
+      .subscribe(
+        response => {
+          
+
+        },
+        error => {
+          this.error = "Couldnt add the ability"
+        this.visible = !this.visible;
+          
+        }
+      );
+  }catch(err){
+    this.error = "Couldnt add the ability"
+    this.visible = !this.visible;
+  }
+  }
 
   init(){
     
     this.proficiency = this.getProficiencyBonus(this.character.level)
     this.bonuses = this.character.bonuses;
+    this.abilities = this.character.abilitiesMini;
+
     const newArray = [];
     const targetCharacteristics = [1, 2, 3, 4, 5, 21];
     for (let i = 0; i < this.bonuses.length; i++) {
@@ -97,16 +156,6 @@ export class ChractersDetailsComponent implements OnInit{
     this.bonuses = this.character.bonuses;
     this.bonusesBase = newArray
     this.loaded = true;
-console.log(this.character)
-
-    
-    
-  }
-  getSpellsCharacter(){
-
-  }
-  getAbilitiesCharacter(){
-
   }
   
 
@@ -135,7 +184,6 @@ console.log(this.character)
 
   updateProficiency(bonus: any) {
     bonus.setProficiency = bonus.setProficiency ? 1 : 0;
-    console.log(this.bonusesBase)
   }
 
   getProficiencyBonus(level: number): number {
@@ -152,4 +200,115 @@ console.log(this.character)
     }
     return 2; 
   }
+
+  onTabChange(event: MatTabChangeEvent): void {
+    const selectedIndex = event.index;
+    
+    if (selectedIndex === 1) {
+      
+      
+    } else if (selectedIndex === 2) {
+      
+      
+    }
+  }
+  
+  
+
+  save(){
+    const url = `https://localhost:7141/api/characters/UpdateBonuses`;
+
+    const headers = new HttpHeaders()
+      .set('Accept', '*/*')
+      .set('Content-Type', 'application/json');
+
+      const body = [...this.bonuses, ...this.bonusesBase];
+    this.http.post(url, body, { headers })
+      .subscribe(
+        response => {
+          
+
+        },
+        error => {
+          this.error = "Couldnt save bonuses"
+          this.toggleToast()
+          
+        }
+      );
+  }
+  
+  
+  
+  
+  
+
+  toggleToast() {
+    this.visible = !this.visible;
+  }
+
+  onVisibleChange($event: boolean) {
+    this.visible = $event;
+    this.percentage = !this.visible ? 0 : this.percentage;
+  }
+
+  onTimerChange($event: number) {
+    this.percentage = $event * 25;
+  }
+
+  toggleNewAbility() {
+    this.showNewAbilityForm = !this.showNewAbilityForm;
+  }
+  
+  saveNewAbility() {
+    this.saveNewAbilityToHttp(this.newAbility);
+   
+    
+    this.newAbility = {
+      name: '',
+      description: ''
+    };
+    this.showNewAbilityForm = false;
+  }
+  
+  cancelNewAbility() {
+    
+    this.newAbility = {
+      name: '',
+      description: ''
+    };
+    this.showNewAbilityForm = false;
+  }
+ 
+  saveNewAbilityToHttp(ability:any){
+    
+  try{
+    const url = `https://localhost:7141/api/ability/AddAbilitiesToCharacter?characterId=${this.character.id}`;
+    const headers = new HttpHeaders()
+      .set('Accept', '*/*')
+      .set('Content-Type', 'application/json');
+
+    const body = [ability];
+
+    this.http.post(url, body, { headers })
+      .subscribe(
+        response => {
+          this.getDetailsCahracter();
+
+        },
+        error => {
+          this.error = "Couldnt add the abilities"
+        this.visible = !this.visible;
+          
+        }
+      );
+  }catch{
+    this.error = "Couldnt add the abilities"
+        this.visible = !this.visible;
+  }
+}
+    editCharacter(){
+      this.router.navigate(['character/edit/',this.characterId]);
+    }
+  
+  
 }

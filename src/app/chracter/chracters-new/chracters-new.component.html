@@ -21,7 +21,7 @@
           <button mat-icon-button (click)="decreaseNumber(attribute)">
             <mat-icon>remove</mat-icon>
           </button>
-          <input type="number" [(ngModel)]="attribute.value" class="square-input" min="2" max="18">
+          <input type="number" [disabled]="isUpdating" [(ngModel)]="attribute.value" class="square-input" min="2" max="18">
           <button mat-icon-button (click)="increaseNumber(attribute)">
             <mat-icon>add</mat-icon>
           </button>
@@ -141,24 +141,38 @@
         <div class="form-field-container">
           <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
             <mat-label>Class</mat-label>
-            <input matInput type="text" formControlName="characterClass" class="form-control" [matAutocomplete]="classAuto">
-            <mat-autocomplete #classAuto="matAutocomplete"(optionSelected)="classOnChange($event)">
+            <input matInput type="text" [disabled]="isUpdating" formControlName="characterClass" class="form-control" [matAutocomplete]="classAuto">
+            <mat-autocomplete  #classAuto="matAutocomplete"(optionSelected)="classOnChange($event)">
               <mat-option *ngFor="let class of classes" [value]="class.label">
                 {{ class.label }}
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>
+          <div *ngIf="showClass">
+            <h3>Class Name: {{ class.name }}</h3>
+            <p> Description: {{ class.description }}</p>
+          </div>
         </div>
         <div class="form-field-container">
           <mat-form-field appearance="outline" class="custom-form-field" style="width: 100%">
             <mat-label>Race</mat-label>
-            <input matInput type="text" formControlName="race" class="form-control" [matAutocomplete]="raceAuto">
+            <input matInput type="text" [disabled]="isUpdating" formControlName="race" class="form-control" [matAutocomplete]="raceAuto">
             <mat-autocomplete #raceAuto="matAutocomplete" (optionSelected)="raceOnChange($event)">
               <mat-option *ngFor="let race of races" [value]="race.label">
                 {{ race.label }}
               </mat-option>
             </mat-autocomplete>
+            
           </mat-form-field>
+          <div *ngIf="showRace">
+            <h3>Race Name: {{ race.name }}</h3>
+          <p> Description: {{ race.description }}</p>
+          <p> Description Alignment: {{ race.descAlignment }}</p>
+          <p> Height: {{ race.height }}</p>
+          <p> Weight: {{ race.weight }}</p>
+            
+
+          </div>
         </div>
         <div>
           <button mat-button matStepperPrevious>Back</button>
@@ -176,16 +190,32 @@
       <div *ngIf="checkClassAbilities()">
         <div>Vida inicial</div>
         <input type="number" [(ngModel)]="currentHp" class="square-input" min="1" [max]="maxHp" >
-
+        <h1>Class abilities</h1>
         <div *ngFor="let ability of abilities">
           <h3>{{ ability.name }}</h3>
           <p>{{ ability.description }}</p>
         </div>
+        <div *ngIf="showRace">
+          <h1>Race abilities</h1>
+          
+            <div *ngIf="raceAbilityExists">
+              <h4>Name: {{ race.ability.name }}</h4>
+              <p>Description: {{ race.ability.description }}</p>
+            </div>
+            <div *ngIf="!raceAbilityExists">
+              
+              <p>This race has no ability!</p>
+            </div>
+            
+        </div>
+        
       <div>
       </div>
       
         <button mat-button matStepperPrevious>Back</button>
-        <button mat-button (click)="create()">Create character</button>
+        <button *ngIf="isUpdating" mat-button (click)="update()">Update character</button>
+
+        <button *ngIf="!isUpdating" mat-button (click)="create()">Create character</button>
       </div>
     </mat-step>
   </mat-stepper>
@@ -209,7 +239,7 @@
       Error
     </c-toast-header>
     <c-toast-body>
-      <p>Couldn't add the character</p>
+      <p>{{error}}</p>
       <c-progress thin>
         <c-progress-bar [value]="percentage"></c-progress-bar>
       </c-progress>
