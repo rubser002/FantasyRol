@@ -118,18 +118,18 @@
                           </ng-template>
                           
                     </mat-tab>
-                    <mat-tab label="Abilidades de clase y raza">
+                    <mat-tab label="Abilities of class and race">
                       <ng-template matTabContent>
-                        <h2>Abilidades de clase y raza</h2>
+                        <h2>Abilities of class and race</h2>
                         <h3>Descripcion de Clase</h3>
                         <h4>{{character.characterClass.name}}</h4>
                         <p>{{character.characterClass.description}}</p>
 
-                        <h3>Descripcion de Raza</h3>
+                        <h3>Abilities of Race</h3>
                         <h4>{{character.characterRace.name}}</h4>
                         <p>{{character.characterRace.description}}</p>
 
-                        <h3>Abilidades de personaje</h3>
+                        <h3>Abilities of character</h3>
                         <button mat-raised-button color="primary" class="new-ability" (click)="toggleNewAbility()">Create New Ability</button>
 
                         <div *ngIf="showNewAbilityForm" class="new-ability">
@@ -180,10 +180,141 @@
                       </ng-template>
                     </mat-tab>
                     <mat-tab label="Hechizos">
-                      <ng-template matTabContent>
-                        <h2>Hechizos</h2>
-                        <!-- Add your content for Tab 3 here -->
-                      </ng-template>
+                      
+                      
+
+                      <h2>Spells</h2>
+                      <mat-tab-group>
+                        
+                        <mat-tab label="Hechizos Personaje">
+                          <div class="row">
+
+                            <div class="col-md-3">
+                              <mat-form-field appearance="outline">
+                                <mat-label>Name:</mat-label>
+                                <input matInput [(ngModel)]="nameFilterCharacter" (input)="applyFiltersCharacter()" class="form-control rounded">
+                              </mat-form-field>
+                            </div>
+                            
+                            <div class="col-md-3">
+                              <mat-form-field appearance="outline">
+                                <mat-label>Description:</mat-label>
+                                <input matInput [(ngModel)]="descriptionFilterCharacter" (input)="applyFiltersCharacter()" class="form-control rounded">
+                              </mat-form-field>
+                            </div>
+    
+                            <div class="col-md-3">
+                              <mat-form-field appearance="outline">
+                                <mat-label>Level:</mat-label>
+                                <input matInput [(ngModel)]="levelFilterCharacter" (input)="applyFiltersCharacter()" class="form-control rounded">
+                              </mat-form-field>
+                            </div>
+                            
+                            
+                            
+                            <div class="col-md-2">
+    
+                            </div>
+                          </div>
+                          
+                          <div class="table-responsive">
+                            <table class="table">
+                              <thead>
+                                <tr>
+                                  <th class="col-md-2">Name</th>
+                                  <th class="col-md-4">Description</th>
+                                  <th class="col-md-2">School</th>
+                                  <th class="col-md-1">Spell Level</th>
+                                  <th class="col-md-4">Components</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let spell of spellsCharacter">
+                                  <td class="col-md-2">{{ spell.name }}</td>
+                                  <td class="col-md-4">{{ spell.description }}</td>
+                                  <td class="col-md-1">{{ spell.schoolDesc }}</td>
+                                  <td class="col-md-1">{{ spell.spellLevel }}</td>
+                                  <td class="col-md-4">{{ spell.components }}</td>
+                                  <td class="col-md-1">
+                                    <button mat-icon-button (click)="deleteSpell(spell)">
+                                      <mat-icon>close</mat-icon>
+                                    </button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                          
+                          <mat-paginator *ngIf="loaded" [length]="getTotalItemsCharacter()" [pageSize]="10" [pageIndex]="currentPageCharacter - 1" (page)="onPageChangeCharacter($event)"></mat-paginator>
+    
+                        </mat-tab>
+
+                        <mat-tab label="Hechizos">
+                          <div class="row">
+
+                            <div class="col-md-3">
+                              <mat-form-field appearance="outline">
+                                <mat-label>Name:</mat-label>
+                                <input matInput [(ngModel)]="nameFilter" (input)="applyFilters()" class="form-control rounded">
+                              </mat-form-field>
+                            </div>
+                            
+                            <div class="col-md-3">
+                              <mat-form-field appearance="outline">
+                                <mat-label>Description:</mat-label>
+                                <input matInput [(ngModel)]="descriptionFilter" (input)="applyFilters()" class="form-control rounded">
+                              </mat-form-field>
+                            </div>
+    
+                            <div class="col-md-3">
+                              <mat-form-field appearance="outline">
+                                <mat-label>Level:</mat-label>
+                                <input matInput [(ngModel)]="levelFilter" (input)="applyFilters()" class="form-control rounded">
+                              </mat-form-field>
+                            </div>
+                            
+                            
+                            
+                            <div class="col-md-2">
+    
+                            </div>
+                          </div>
+                          
+                          <div class="table-responsive">
+                            <table class="table">
+                              <thead>
+                                <tr>
+                                  <th class="col-md-2">Name</th>
+                                  <th class="col-md-4">Description</th>
+                                  <th class="col-md-1">School</th>
+                                  <th class="col-md-1">Spell Level</th>
+                                  <th class="col-md-3">Components</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let spell of spells">
+                                  <td class="col-md-2">{{ spell.name }}</td>
+                                  <td class="col-md-4">{{ spell.description }}</td>
+                                  <td class="col-md-1">{{ spell.schoolDesc }}</td>
+                                  <td class="col-md-1">{{ spell.spellLevel }}</td>
+                                  <td class="col-md-3">{{ spell.components }}</td>
+                                  <td class="col-md-1">
+                                    <button mat-icon-button (click)="saveSpell(spell)">
+                                      <mat-icon>save</mat-icon>
+                                    </button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                          
+                          
+                          <mat-paginator [length]="getTotalItems()" [pageSize]="10" [pageIndex]="currentPage - 1" (page)="onPageChange($event)"></mat-paginator>
+    
+                        </mat-tab>
+                        
+                      </mat-tab-group>
+
                     </mat-tab>
                   </mat-tab-group>
                 </mat-card-content>
@@ -205,6 +336,23 @@
     </c-toast-header>
     <c-toast-body>
       <p>{{error}}</p>
+      <c-progress thin>
+        <c-progress-bar [value]="percentage"></c-progress-bar>
+      </c-progress>
+    </c-toast-body>
+  </c-toast>
+</c-toaster>
+
+<c-toaster [placement]="position" class="p-3" position="fixed">
+  <c-toast
+    (timer)="onTimerSaveChange($event)"
+    (visibleChange)="onVisibleSaveChange($event)"
+    [visible]="visibleSave">
+    <c-toast-header>
+      Saved
+    </c-toast-header>
+    <c-toast-body>
+      <p>Saved correctly</p>
       <c-progress thin>
         <c-progress-bar [value]="percentage"></c-progress-bar>
       </c-progress>

@@ -23,16 +23,22 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { ToastrModule } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
-import { ChractersDetailsComponent } from './chracter/chracters-details/chracters-details.component';
+
 import { ChractersListComponent } from './chracter/chracters-list/chracters-list.component';
 import { ChractersNewComponent } from './chracter/chracters-new/chracters-new.component';
 import { ChractersEditComponent } from './chracter/chracters-edit/chracters-edit.component';
 import {MatSelectModule} from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
-import { ToastModule } from '@coreui/angular';
+import { PaginationModule, ToastModule } from '@coreui/angular';
 import { ProgressModule } from '@coreui/angular';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTabsModule } from '@angular/material/tabs';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableModule } from '@angular/material/table';
+import { ChractersDetailsComponent } from './chracter/chracters-details/chracters-details.component';
+
 
 @NgModule({
   declarations: [
@@ -74,7 +80,9 @@ import { MatTabsModule } from '@angular/material/tabs';
     ToastModule,
     ProgressModule,
     MatTabsModule,
-    
+    MatPaginatorModule,
+    PaginationModule ,
+    MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]
