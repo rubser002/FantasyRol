@@ -43,7 +43,10 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatGridListModule,
     MatTooltipModule,
     MatSelectModule,
-    MatTabsModule
+    MatTabsModule,
+
+
+    
   ],
   exports: [
     NavComponent
